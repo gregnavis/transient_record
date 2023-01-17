@@ -45,6 +45,7 @@ class DatabaseConfiguration
   private
 
   def connect database
+    init
     ActiveRecord::Base.establish_connection(
       adapter:            @adapter,
       use_metadata_table: false,

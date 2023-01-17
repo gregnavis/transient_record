@@ -22,7 +22,7 @@ class TransientRecordTest < Minitest::Spec
       assert_equal %w[users], @connection.tables, <<~ERROR
         The users table should have been created
       ERROR
-      refute @connection.columns("users").include?("id"), <<~ERROR
+      refute @connection.columns("users").any? { |column| column.name == "id" }, <<~ERROR
         The users table should not contain the id column, as `id: false` was given
       ERROR
       assert_equal %w[email name], @connection.columns("users").map(&:name), <<~ERROR
@@ -85,7 +85,7 @@ class TransientRecordTest < Minitest::Spec
       assert user.invalid?, <<~ERROR
         User with nil email should have been marked invalid by the validator from the model body
       ERROR
-      assert_equal ({ email: [{ error: :blank }] }), user.errors.details, <<~ERROR
+      assert_equal ({ email: ["can't be blank"] }), user.errors.to_hash, <<~ERROR
         User with nil email should have an error caused by the blank email column
       ERROR
     end
