@@ -187,7 +187,9 @@ module TransientRecord
 
         begin
           connection.drop_table table, force: :cascade, if_exists: true
-        rescue ActiveRecord::InvalidForeignKey
+        rescue ActiveRecord::InvalidForeignKey, ActiveRecord::StatementInvalid
+          # ActiveRecord::StatementInvalid is raised by MySQL when attempting to
+          # drop a table that has foreign keys referring to it.
           tables_to_remove << table
         end
       end
