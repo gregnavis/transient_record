@@ -23,6 +23,9 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Enabled: false
 
+Style/FetchEnvVar:
+  Enabled: false
+
 Style/GlobalVars:
   Enabled: false
 

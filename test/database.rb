@@ -9,7 +9,7 @@ class DatabaseConfiguration
     "sqlite3"    => %w[sqlite3 :memory:].freeze
   }.freeze
 
-  def initialize adapter
+  def initialize adapter, options
     if !LIBRARY_AND_DATABASE_NAMES.include?(adapter)
       raise "DATABASE_ADAPTER was set to #{adapter.inspect}, but valid values are:" \
             "" \
@@ -19,6 +19,7 @@ class DatabaseConfiguration
     end
 
     @adapter            = adapter
+    @options            = options
     @library, @database = LIBRARY_AND_DATABASE_NAMES.fetch(adapter)
   end
 
@@ -48,12 +49,17 @@ class DatabaseConfiguration
       adapter:            @adapter,
       use_metadata_table: false,
       database:           database,
-      pool:               1
+      pool:               1,
+      **@options
     )
     ActiveRecord::Base.connection
   end
 end
 
 # Database-specific initialization.
-$database = DatabaseConfiguration.new ENV.fetch("DATABASE_ADAPTER")
+$database = DatabaseConfiguration.new ENV.fetch("DATABASE_ADAPTER"),
+                                      host:     ENV["DATABASE_HOST"],
+                                      port:     ENV["DATABASE_PORT"],
+                                      username: ENV["DATABASE_USERNAME"],
+                                      password: ENV["DATABASE_PASSWORD"]
 $database.init
