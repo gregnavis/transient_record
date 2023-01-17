@@ -6,4 +6,4 @@ gem "activerecord", "~> 6.1.0"
 # Older versions result in lots of warnings in Ruby 2.7.
 gem "pg", "~> 1.2.0"
 gem "mysql2", "~> 0.5.3"
-gem "sqlite3", "~> 1.5.4"
+gem "sqlite3", "~> 1.4.4"

@@ -4,4 +4,4 @@ gemspec path: File.join(File.dirname(__FILE__), "..")
 gem "activerecord", "~> 5.0.0"
 gem "pg", "~> 1.0.0"
 gem "mysql2", "~> 0.5.3"
-gem "sqlite3", "~> 1.5.4"
+gem "sqlite3", "~> 1.3.13"
