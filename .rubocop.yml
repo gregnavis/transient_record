@@ -1,0 +1,39 @@
+require:
+  - rubocop-rake
+
+AllCops:
+  TargetRubyVersion: 2.1
+  NewCops: enable
+
+Gemspec/OrderedDependencies:
+  Enabled: false
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+  EnforcedLastArgumentHashStyle: always_inspect
+
+Layout/LineLength:
+  AllowedPatterns:
+    - "\\s*#\\s*@see.*"
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Style/GlobalVars:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
