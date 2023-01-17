@@ -187,7 +187,7 @@ module TransientRecord
 
         begin
           connection.drop_table table, force: :cascade, if_exists: true
-        rescue ActiveRecord::InvalidForeignKey => exc
+        rescue ActiveRecord::InvalidForeignKey
           tables_to_remove << table
         end
       end

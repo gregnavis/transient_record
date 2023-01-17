@@ -125,7 +125,9 @@ class TransientRecordTest < Minitest::Spec
     end
   end
 
-  def itemize(array) = array.map(&:to_s).map { "- #{_1}" }.join("\n")
+  def itemize array
+    array.map(&:to_s).map { "- #{_1}" }.join("\n")
+  end
 end
 
 # A class to serve as a base class when testing custom model base classes.
