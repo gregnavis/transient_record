@@ -35,7 +35,7 @@
 #   end
 module TransientRecord
   # Transient Record version number.
-  VERSION = "1.0.0.rc1"
+  VERSION = "1.0.0"
 
   # A module where all temporary models are defined.
   #
