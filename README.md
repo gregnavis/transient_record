@@ -1,6 +1,6 @@
 # Transient Record
 
-`transient-record` is a gem to define temporary tables and Active Record models
+`transient_record` is a gem to define temporary tables and Active Record models
 for testing purposes. It's a great tool for testing **generic Active Record code
 and libraries**.
 
