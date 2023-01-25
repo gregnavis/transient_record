@@ -37,6 +37,9 @@ module TransientRecord
   # Transient Record version number.
   VERSION = "1.0.0"
 
+  # A class representing Transient Record errors.
+  class Error < RuntimeError; end
+
   # A module where all temporary models are defined.
   #
   # Models defined via {TransientRecord.define_model}, {TransientRecord#define_model}
@@ -74,6 +77,10 @@ module TransientRecord
     TransientRecord.define_model(*args, &block)
   end
 
+  # Transient table names are stored in a module instance variable, so that
+  # only transient tables can be removed in .cleanup.
+  @transient_tables = []
+
   class << self
     # Create a transient table.
     #
@@ -101,6 +108,7 @@ module TransientRecord
     # @see https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-create_table Documentation for #create_table in Ruby on Rails
     def create_table table_name, options = {}, &block
       table_name = table_name.to_sym
+      @transient_tables << table_name
 
       ::ActiveRecord::Migration.suppress_messages do
         ::ActiveRecord::Migration.create_table table_name, **options, &block
@@ -178,7 +186,7 @@ module TransientRecord
       Models.remove_all_consts
 
       connection = ::ActiveRecord::Base.connection
-      tables_to_remove = connection.tables
+      tables_to_remove = @transient_tables
       drop_attempts = tables_to_remove.count * (1 + tables_to_remove.count) / 2
 
       drop_attempts.times do
@@ -192,6 +200,12 @@ module TransientRecord
           # drop a table that has foreign keys referring to it.
           tables_to_remove << table
         end
+      end
+
+      if !@transient_tables.empty?
+        raise Error.new(<<~ERROR)
+          The following transient tables could not be removed: #{@transient_tables.join(', ')}.
+        ERROR
       end
 
       GC.start

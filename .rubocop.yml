@@ -20,6 +20,12 @@ Layout/LineLength:
 Metrics/BlockLength:
   Enabled: false
 
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/MethodLength:
   Enabled: false
 
@@ -37,6 +43,9 @@ Style/MethodDefParentheses:
 
 Style/NegatedIf:
   Enabled: false
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

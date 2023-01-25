@@ -123,6 +123,20 @@ class TransientRecordTest < Minitest::Spec
         #{itemize remaining_models}
       ERROR
     end
+
+    it "does not remove non-transient tables" do
+      begin
+        @connection.create_table :users
+
+        TransientRecord.cleanup
+
+        assert @connection.table_exists?(:users), <<~ERROR
+          The non-transient table users should have not been removed
+        ERROR
+      ensure
+        @connection.drop_table :users, if_exists: true
+      end
+    end
   end
 
   def itemize array
