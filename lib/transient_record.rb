@@ -23,6 +23,13 @@
 #     validates :email, presence: true
 #   end
 #
+#   # Or with flipped order of operations.
+#   TransientRecord.defined_model :User do
+#     validates :email, presence: true
+#   end.create_table do |t|
+#     t.string :email, null: false
+#   end
+#
 #   # The transient model can be referenced via TransientRecord::Models::User.
 #   # For example, a new user instance can be instantiated via:
 #   user = TransientRecord::Models::User.new email: nil
@@ -165,7 +172,7 @@ module TransientRecord
 
       klass.class_eval(&block) if block_given?
 
-      nil
+      TableDefinitionProxy.new(klass)
     end
 
     # Drop transient tables and models.
@@ -228,5 +235,19 @@ module TransientRecord
     end
   end
 
-  private_constant :ModelDefinitionProxy
+  # A table definition proxy is a helper class used to implement a fluent
+  # interface to callers allowing them to create a model and its corresponding
+  # table in close succession. It's marked private as there's no need for
+  # callers to access it.
+  class TableDefinitionProxy
+    def initialize model
+      @model = model
+    end
+
+    def create_table &block
+      TransientRecord.create_table @model.table_name, &block
+    end
+  end
+
+  private_constant :ModelDefinitionProxy, :TableDefinitionProxy
 end
