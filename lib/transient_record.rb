@@ -110,9 +110,7 @@ module TransientRecord
       table_name = table_name.to_sym
       @transient_tables << table_name
 
-      ::ActiveRecord::Migration.suppress_messages do
-        ::ActiveRecord::Migration.create_table table_name, **options, &block
-      end
+      ::ActiveRecord::Base.connection.create_table table_name, **options, &block
 
       # Return a proxy object allowing the caller to chain #define_model
       # right after creating a table so that it can be followed by the model
