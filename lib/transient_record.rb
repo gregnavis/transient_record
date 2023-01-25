@@ -35,7 +35,7 @@
 #   end
 module TransientRecord
   # Transient Record version number.
-  VERSION = "1.0.0"
+  VERSION = "1.0.1"
 
   # A class representing Transient Record errors.
   class Error < RuntimeError; end
