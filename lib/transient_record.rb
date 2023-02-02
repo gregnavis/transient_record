@@ -147,8 +147,6 @@ module TransientRecord
     #
     # @return [nil]
     def define_model model_name, base_class = ::ActiveRecord::Base, &block
-      model_name = model_name.to_sym
-
       # Normally, when a class is defined via `class MyClass < MySuperclass` the
       # .name class method returns the name of the class when called from within
       # the class body. However, anonymous classes defined via Class.new DO NOT
