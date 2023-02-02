@@ -186,7 +186,7 @@ module TransientRecord
       drop_attempts = tables_to_remove.count * (1 + tables_to_remove.count) / 2
 
       drop_attempts.times do
-        table = tables_to_remove.shift
+        table = tables_to_remove.pop
         break if table.nil?
 
         begin
@@ -194,7 +194,7 @@ module TransientRecord
         rescue ActiveRecord::InvalidForeignKey, ActiveRecord::StatementInvalid
           # ActiveRecord::StatementInvalid is raised by MySQL when attempting to
           # drop a table that has foreign keys referring to it.
-          tables_to_remove << table
+          tables_to_remove.unshift(table)
         end
       end
 
