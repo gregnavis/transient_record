@@ -97,6 +97,18 @@ class TransientRecordTest < Minitest::Spec
         TransientRecord::Models::User should inherit from ApplicationRecord, not #{TransientRecord::Models::User.superclass.name}
       ERROR
     end
+
+    it "allows .create_model call on return value" do
+      TransientRecord.define_model(:Post) do
+        validates :title, presence: true
+      end.create_table do |t|
+        t.string :title, null: false
+      end
+
+      assert_includes @connection.tables, "posts", <<~ERROR
+        The posts table should have been created
+      ERROR
+    end
   end
 
   describe ".cleanup" do
