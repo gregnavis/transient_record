@@ -124,7 +124,24 @@ class TransientRecordTest < Minitest::Spec
                "Context::User model should have been defined"
         assert_equal ApplicationRecord,
                      Context::User.superclass,
-                     "Context::User should inherit from ActiveRecord::Base, not #{Context::User.superclass.name}" # rubocop:disable Layout/LineLength
+                     "Context::User should inherit from ActiveRecord::Base, not #{Context::User.superclass.name}"
+      end
+
+      it "defines named model with custom base class" do
+        Context.define_model :User
+        Context.define_model :Admin, Context::User
+
+        assert Context.const_defined?(:Admin),
+               "Context::Admin model should have been defined"
+        assert_equal Context::User,
+                     Context::Admin.superclass,
+                     "Context::Admin should be a subclass of Context::User, not #{Context::Admin.superclass.name}"
+      end
+
+      it "disallows base classes not inheriting from context base class" do
+        assert_raises TransientRecord::Error do
+          Context.define_model :User, ActiveRecord::Base
+        end
       end
 
       it "converts model name to symbol" do

@@ -162,6 +162,9 @@ class TransientRecord
     # from the class the context corresponds to and with class body defined by
     # the block passed to the method.
     #
+    # The base class can be customized by passing in a second argument, but it
+    # **must** be a subclass of the context's base class.
+    #
     # Transient models must be removed explicitly by calling {.cleanup} or
     # {#cleanup}.
     #
@@ -180,12 +183,21 @@ class TransientRecord
     #
     #
     # @param model_name [String, Symbol] name of model to define.
+    # @param base_class [Class] base class the model should inherit from
     #
     # @yield class definition
     #
     # @return [nil]
-    def define_model model_name, &block
-      klass = Class.new @base_class
+    def define_model model_name, base_class = nil, &block
+      base_class ||= @base_class
+
+      if base_class > @base_class
+        raise Error.new(<<~ERROR)
+          #{model_name} base class is #{base_class.name} but it must be a descendant of #{@base_class.name}
+        ERROR
+      end
+
+      klass = Class.new base_class
       const_set model_name, klass
 
       klass.class_eval(&block) if block_given?
@@ -248,8 +260,8 @@ class TransientRecord
       @table_name = table_name
     end
 
-    def define_model &block
-      @context.define_model @table_name.to_s.classify, &block
+    def define_model *args, &block
+      @context.define_model @table_name.to_s.classify, *args, &block
     end
   end
 
