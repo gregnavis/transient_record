@@ -9,45 +9,53 @@ base_configuration = {
   password: ENV["DATABASE_PASSWORD"]
 }
 
+def downgrade_to_single_database_if_needed configurations
+  if ActiveRecord::VERSION::MAJOR >= 6
+    configurations
+  else
+    configurations.slice("primary")
+  end
+end
+
 DATABASE_CONFIGURATIONS = {
   postgresql: {
     require:        "pg",
-    configurations: {
-      primary:   base_configuration.merge(
-        adapter:  "postgresql",
-        database: "transient_record_primary"
+    configurations: downgrade_to_single_database_if_needed(
+      "primary"   => base_configuration.merge(
+        "adapter"  => "postgresql",
+        "database" => "transient_record_primary"
       ),
-      secondary: base_configuration.merge(
-        adapter:  "postgresql",
-        database: "transient_record_secondary"
+      "secondary" => base_configuration.merge(
+        "adapter"  => "postgresql",
+        "database" => "transient_record_secondary"
       )
-    }
+    )
   },
   mysql2:     {
     require:        "mysql2",
-    configurations: {
-      primary:   base_configuration.merge(
-        adapter:  "mysql2",
-        database: "transient_record_primary"
+    configurations: downgrade_to_single_database_if_needed(
+      "primary"   => base_configuration.merge(
+        "adapter"  => "mysql2",
+        "database" => "transient_record_primary"
       ),
-      secondary: base_configuration.merge(
-        adapter:  "mysql2",
-        database: "transient_record_secondary"
+      "secondary" => base_configuration.merge(
+        "adapter"  => "mysql2",
+        "database" => "transient_record_secondary"
       )
-    }
+    )
   },
   sqlite3:    {
     require:        "sqlite3",
-    configurations: {
-      primary:   {
-        adapter:  "sqlite3",
-        database: ":memory:"
+    configurations: downgrade_to_single_database_if_needed(
+      "primary"   => {
+        "adapter"  => "sqlite3",
+        "database" => ":memory:"
       },
-      secondary: {
-        adapter:  "sqlite3",
-        database: ":memory:"
+      "secondary" => {
+        "adapter"  => "sqlite3",
+        "database" => ":memory:"
       }
-    }
+    )
   }
 }.freeze
 
