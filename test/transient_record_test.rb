@@ -3,7 +3,8 @@
 # Base classes that mimic Active Record setup in a Rails app using
 # multiple databases.
 class ApplicationRecord < ActiveRecord::Base
-  primary_abstract_class
+  primary_abstract_class if respond_to?(:primary_abstract_class)
+
   connects_to database: { writing: :primary }
 end
 
