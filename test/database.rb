@@ -2,65 +2,63 @@
 
 require "active_record"
 
-class DatabaseConfiguration
-  LIBRARY_AND_DATABASE_NAMES = {
-    "postgresql" => %w[pg transient_record_test].freeze,
-    "mysql2"     => %w[mysql2 transient_record_test].freeze,
-    "sqlite3"    => %w[sqlite3 :memory:].freeze
-  }.freeze
+base_configuration = {
+  host:     ENV["DATABASE_HOST"],
+  port:     ENV["DATABASE_PORT"],
+  username: ENV["DATABASE_USERNAME"],
+  password: ENV["DATABASE_PASSWORD"]
+}
 
-  def initialize adapter, options
-    if !LIBRARY_AND_DATABASE_NAMES.include?(adapter)
-      raise "DATABASE_ADAPTER was set to #{adapter.inspect}, but valid values are:" \
-            "" \
-            "- postgresql" \
-            "- mysql2" \
-            "- sqlite3"
-    end
+DATABASE_CONFIGURATIONS = {
+  postgresql: {
+    require:        "pg",
+    configurations: {
+      primary:   base_configuration.merge(
+        adapter:  "postgresql",
+        database: "transient_record_primary"
+      ),
+      secondary: base_configuration.merge(
+        adapter:  "postgresql",
+        database: "transient_record_secondary"
+      )
+    }
+  },
+  mysql2:     {
+    require:        "mysql2",
+    configurations: {
+      primary:   base_configuration.merge(
+        adapter:  "mysql2",
+        database: "transient_record_primary"
+      ),
+      secondary: base_configuration.merge(
+        adapter:  "mysql2",
+        database: "transient_record_secondary"
+      )
+    }
+  },
+  sqlite3:    {
+    require:        "sqlite3",
+    configurations: {
+      primary:   {
+        adapter:  "sqlite3",
+        database: ":memory:"
+      },
+      secondary: {
+        adapter:  "sqlite3",
+        database: ":memory:"
+      }
+    }
+  }
+}.freeze
 
-    @adapter            = adapter
-    @options            = options
-    @library, @database = LIBRARY_AND_DATABASE_NAMES.fetch(adapter)
-  end
-
-  def init
-    require @library
-  end
-
-  def prepare
-    return if @adapter == "sqlite3"
-
-    connect(nil).recreate_database @database
-  end
-
-  def connection
-    if defined?(@connection)
-      @connection
-    else
-      connect(@database)
-      @connection = ActiveRecord::Base.connection
-    end
-  end
-
-  private
-
-  def connect database
-    init
-    ActiveRecord::Base.establish_connection(
-      adapter:            @adapter,
-      use_metadata_table: false,
-      database:           database,
-      pool:               1,
-      **@options
-    )
-    ActiveRecord::Base.connection
-  end
+adapter = ENV.fetch("DATABASE_ADAPTER").to_sym
+if !DATABASE_CONFIGURATIONS.include?(adapter)
+  # rubocop:disable Layout/LineLength
+  raise "DATABASE_ADAPTER was set to #{adapter.inspect}, but valid values are: #{DATABASE_CONFIGURATIONS.keys.map(&:to_s).join(', ')}"
+  # rubocop:enable Layout/LineLength
 end
 
-# Database-specific initialization.
-$database = DatabaseConfiguration.new ENV.fetch("DATABASE_ADAPTER"),
-                                      host:     ENV["DATABASE_HOST"],
-                                      port:     ENV["DATABASE_PORT"],
-                                      username: ENV["DATABASE_USERNAME"],
-                                      password: ENV["DATABASE_PASSWORD"]
-$database.init
+adapter_configuration = DATABASE_CONFIGURATIONS[adapter]
+require adapter_configuration.fetch(:require)
+
+ActiveRecord::Base.configurations = adapter_configuration.fetch(:configurations)

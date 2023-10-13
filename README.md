@@ -16,21 +16,18 @@ Installing Transient Record is a two-step process.
 You can include Transient Record in your `Gemfile`:
 
 ```ruby
+# Add the following to use the most recent release:
 gem "transient_record", group: :test
+
+# Alternatively, you can use the most recent development version:
+gem "transient_record", github: "gregnavis/transient_record", group: :test
 ```
+
+Don't forget to run `bundle install`.
 
 The above assumes it'll be used for testing purposes only, hence the `test`
 group. However, if you intend to use the gem in other circumstances then you may
 need to adjust the group accordingly.
-
-If you'd like to use the latest development release then use the line below
-instead:
-
-```ruby
-gem "transient_record", github: "gregnavis/transient_record", group: :test
-```
-
-After modifying `Gemfile`, run `bundle install`.
 
 ### Step 2: Integrating with the Test Suite
 
@@ -38,6 +35,9 @@ After installing the gem, Transient Record must be integrated with the test
 suite. `TransientRecord.cleanup` must be called around every test case: before
 (to prepare a clean database state for the test case) and after (to leave the
 database in a clean state).
+
+**Transient Record is not prepared to work with parallel test suites, so ensure
+tests that use it run sequentially.**
 
 The snippet below demonstrates integrations with various testing libraries:
 
@@ -79,7 +79,24 @@ end
 ## Usage
 
 Transient Record can be used to create temporary tables and, optionally, models
-backed by them.
+backed by them. First, you need to define a Transient Record **context**.
+
+A context is a module associated to a specific Active Record base class (like
+`ActiveRecord::Base` or `ApplicationRecord`) that's used to connect to the
+database and as a base class for transient models. Contexts are needed to
+support multiple databases, as Active Record organizes database connections
+around base classes. Consult [the Rails Guides](https://guides.rubyonrails.org/active_record_multiple_databases.html#setting-up-your-application) to learn more
+about using Active Record with multiple databases.
+
+**If you connect to only one database then you need just one context for
+`ActiveRecord::Base`**.
+
+A context is a Ruby module used to define transient tables and models. Here's
+how a context for `ActiveRecord::Base` can be defined:
+
+```ruby
+Primary = TransientRecord.context_for ActiveRecord::Base
+```
 
 A table can be created by calling `create_table`: a thin wrapper around the
 method of the same name in Active Record. The only difference is the method
@@ -87,10 +104,11 @@ in Transient Record implemented a fluent interface that allows calling
 `define_model` on the return value.
 
 For example, the statement below creates a table named `users` with two one
-string column `name` and one integer column `age`:
+string column `name` and one integer column `age` using the `Primary` context
+introduced above:
 
 ```ruby
-create_table :users do |t|
+Primary.create_table :users do |t|
   t.string :name, null: false
   t.integer :age, null: false
 end
@@ -101,18 +119,18 @@ for details.
 
 In order to define a model backed by that table `define_model` can be called
 **on the return value** of `create_table` with a block containing the model
-class body. For example, to define 
+class body. For example, to define
 
 ```ruby
-create_table :users do |t|
+Primary.create_table :users do |t|
   # ...
 end.define_model do
   validates :email, presence: true
 end
 ```
 
-Models are automatically assigned to constants in `TransientRecord::Models`. The
-example above creates `TransientRecord::Models::User`, and is equivalent to:
+Models are automatically assigned to constants. In the example above, the user
+model is assigned to `Primary::User` via code roughly equivalent to:
 
 ```ruby
 class TransientRecord::Models::User < ActiveRecord::Base
@@ -129,8 +147,7 @@ reason it was decided to use regular tables with an explicit cleanup step.
 
 Transient Record may not work properly in parallelized test suites, e.g. if two
 test workers attempt to create a table with the same name then it's likely to
-result in an error. Full support for parallelism **is** on the roadmap, so feel
-free to report any errors and contribute updates.
+result in an error.
 
 ## Author
 

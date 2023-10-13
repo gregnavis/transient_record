@@ -47,7 +47,7 @@ namespace :db do
   ADAPTERS.each do |adapter|
     desc "Prepare the database for the #{adapter} adapter"
     task adapter => "env:#{adapter}" do
-      require_relative "./test/database"
+      require_relative "test/database"
       $database.init
       $database.prepare
     end

@@ -5,6 +5,9 @@ AllCops:
   TargetRubyVersion: 2.4
   NewCops: enable
 
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
+
 Gemspec/OrderedDependencies:
   Enabled: false
 
