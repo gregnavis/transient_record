@@ -133,7 +133,7 @@ Models are automatically assigned to constants. In the example above, the user
 model is assigned to `Primary::User` via code roughly equivalent to:
 
 ```ruby
-class TransientRecord::Models::User < ActiveRecord::Base
+class Primary::User < ActiveRecord::Base
   validates :email, presence: true
 end
 ```

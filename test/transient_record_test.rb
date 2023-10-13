@@ -117,14 +117,14 @@ class TransientRecordTest < Minitest::Spec
         end
       end
 
-      it "defines named model in TransientRecord::Models" do
+      it "defines named model in context" do
         Context.define_model :User
 
         assert Context.const_defined?(:User),
-               "TransientRecord::Models::Primary::User model should have been defined"
+               "Context::User model should have been defined"
         assert_equal ApplicationRecord,
                      Context::User.superclass,
-                     "TransientRecord::Models::Primary::User should inherit from ActiveRecord::Base, not #{Context::User.superclass.name}" # rubocop:disable Layout/LineLength
+                     "Context::User should inherit from ActiveRecord::Base, not #{Context::User.superclass.name}" # rubocop:disable Layout/LineLength
       end
 
       it "converts model name to symbol" do
