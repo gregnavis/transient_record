@@ -71,6 +71,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    webrick (1.8.1)
     yard (0.9.34)
 
 PLATFORMS
@@ -86,6 +87,7 @@ DEPENDENCIES
   rubocop-rake (>= 0.6.0)
   sqlite3 (>= 1.5.4)
   transient_record!
+  webrick (>= 1.8.1)
   yard (>= 0.9.28)
 
 BUNDLED WITH

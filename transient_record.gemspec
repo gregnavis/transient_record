@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sqlite3", ">= 1.5.4"
   spec.add_development_dependency "rake",    ">= 12.3.3"
   spec.add_development_dependency "yard",    ">= 0.9.28"
+  spec.add_development_dependency "webrick", ">= 1.8.1"
   # We don't install rubocop in CI because we test against older Rubies that
   # are incompatible with Rubocop.
   if ENV["CI"].nil? || ENV["LINT"]
