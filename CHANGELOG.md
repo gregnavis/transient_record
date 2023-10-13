@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0 (to be announced)
+
+- New feature: support for multiple databases.
+
 ## 1.0.1 (25 January 2023)
 
 - Bug fix: `.cleanup` was made to remove only transient tables. (Thanks to

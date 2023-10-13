@@ -72,7 +72,7 @@
 #   event = Analytics::Event.new
 class TransientRecord
   # Transient Record version number.
-  VERSION = "1.0.1"
+  VERSION = "2.0.0.rc1"
 
   # A class representing Transient Record errors.
   class Error < RuntimeError; end
