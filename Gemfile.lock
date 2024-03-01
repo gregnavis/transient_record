@@ -72,7 +72,7 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     webrick (1.8.1)
-    yard (0.9.34)
+    yard (0.9.35)
 
 PLATFORMS
   arm64-darwin-21
