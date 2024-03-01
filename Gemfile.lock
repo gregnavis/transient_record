@@ -34,6 +34,7 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.6.3)
     language_server-protocol (3.17.0.3)
+    mini_portile2 (2.8.5)
     minitest (5.20.0)
     mutex_m (0.1.2)
     mysql2 (0.5.5)
@@ -65,8 +66,8 @@ GEM
       rubocop (~> 1.0)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
-    sqlite3 (1.6.7-arm64-darwin)
-    sqlite3 (1.6.7-x86_64-linux)
+    sqlite3 (1.6.7)
+      mini_portile2 (~> 2.8.0)
     timeout (0.4.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -77,6 +78,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES

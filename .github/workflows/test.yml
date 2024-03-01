@@ -118,9 +118,11 @@ jobs:
           - ruby-version: 3.0
             gemfile: Gemfile.activerecord-6.0.x
           - ruby-version: 3.1
-            gemfile: Gemfile.activerecord-6.1.x
+            gemfile: Gemfile.activerecord-6.0.x
           - ruby-version: 3.2
-            gemfile: Gemfile.activerecord-6.1.x
+            gemfile: Gemfile.activerecord-6.0.x
+          - ruby-version: 3.3
+            gemfile: Gemfile.activerecord-6.0.x
 
           - ruby-version: 2.5
             rubygems: 3.2.3
@@ -136,6 +138,8 @@ jobs:
             gemfile: Gemfile.activerecord-6.1.x
           - ruby-version: 3.2
             gemfile: Gemfile.activerecord-6.1.x
+          - ruby-version: 3.3
+            gemfile: Gemfile.activerecord-6.1.x
 
           - ruby-version: 2.7
             gemfile: Gemfile.activerecord-7.0.x
@@ -145,6 +149,8 @@ jobs:
             gemfile: Gemfile.activerecord-7.0.x
           - ruby-version: 3.2
             gemfile: Gemfile.activerecord-7.0.x
+          - ruby-version: 3.3
+            gemfile: Gemfile.activerecord-7.0.x
 
           - ruby-version: 2.7
             gemfile: Gemfile.activerecord-7.1.x
@@ -153,6 +159,8 @@ jobs:
           - ruby-version: 3.1
             gemfile: Gemfile.activerecord-7.1.x
           - ruby-version: 3.2
+            gemfile: Gemfile.activerecord-7.1.x
+          - ruby-version: 3.3
             gemfile: Gemfile.activerecord-7.1.x
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}
