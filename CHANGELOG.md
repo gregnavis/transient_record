@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 (to be announced)
+## 2.0.0 (2 March 2024)
 
 - New feature: support for multiple databases.
 
