@@ -166,6 +166,18 @@ class TransientRecordTest < Minitest::Spec
       end
     end
 
+    describe "#execute" do
+      it "executes arbitrary query" do
+        result = Context.execute("SELECT 1 AS one").to_a
+        assert_equal(1, result.length)
+
+        item = result[0]
+
+        # PostgreSQL and SQLite return a hash; MySQL returns an array.
+        assert([{ "one" => 1 }, [1]].include?(item))
+      end
+    end
+
     describe "#cleanup" do
       it "removes all transient tables and models" do
         # A foreign key relationship between tables is added, so that cascading

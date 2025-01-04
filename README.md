@@ -138,6 +138,13 @@ class Primary::User < ActiveRecord::Base
 end
 ```
 
+If you need to run an arbitrary query in a given context you can do so via
+`#execute`, which is a wrapper around [the method with the same name in Rails](https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/DatabaseStatements.html#method-i-execute):
+
+```ruby
+Primary.execute("CREATE ROLE gregnavis")
+```
+
 ## Caveats and Limitations
 
 Transient Record does **NOT** default to using temporary tables (created via

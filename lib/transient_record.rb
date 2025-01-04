@@ -60,7 +60,6 @@
 #   user = Primary::User.new email: nil
 #
 # @example Creating a table and a model in another database
-#   #
 #   Analytics = TransientRecord.context_for AnalyticsRecord
 #
 #   Analytics.create_table :events do |t|
@@ -70,6 +69,14 @@
 #   end
 #
 #   event = Analytics::Event.new
+#
+# @example Executing an arbitrary query
+#   # Create a Transient Record context.
+#   Primary = TransientRecord.context_for ActiveRecord::Base
+#
+#   # Call #execute on the context, which is delegated to the same method
+#   # provided by Rails.
+#   Primary.execute("CREATE ROLE gregnavis")
 class TransientRecord
   # Transient Record version number.
   VERSION = "2.0.0"
@@ -203,6 +210,20 @@ class TransientRecord
       klass.class_eval(&block) if block_given?
 
       nil
+    end
+
+    # Executes an arbitrary query.
+    #
+    # This method is a wrapper around the `#execute` method on the Active Record
+    # database connection adapter.
+    #
+    # @param query [String] query to execute
+    # @param name [String] name to log along the query
+    # @return The query result returned by the database connection adapter.
+    #
+    # @see https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/DatabaseStatements.html#method-i-execute Documentation for #execute in Ruby on Rails
+    def execute query, name = nil
+      @base_class.connection.execute query, name
     end
 
     # Drops transient tables and models.
