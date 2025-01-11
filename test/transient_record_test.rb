@@ -3,23 +3,15 @@
 # Base classes that mimic Active Record setup in a Rails app using
 # multiple databases.
 class ApplicationRecord < ActiveRecord::Base
-  if ActiveRecord::VERSION::MAJOR >= 7
-    primary_abstract_class
-  else
-    self.abstract_class = true
-  end
+  primary_abstract_class
 
-  if ActiveRecord::VERSION::MAJOR >= 6
-    connects_to database: { writing: :primary }
-  end
+  connects_to database: { writing: :primary }
 end
 
 class SecondaryRecord < ApplicationRecord
   self.abstract_class = true
 
-  if ActiveRecord::VERSION::MAJOR >= 6
-    connects_to database: { writing: :secondary }
-  end
+  connects_to database: { writing: :secondary }
 end
 
 ApplicationRecord.establish_connection :primary
@@ -27,13 +19,10 @@ ApplicationRecord.establish_connection :primary
 # Transient Record contexts used by the test class below.
 Context = TransientRecord.context_for ApplicationRecord
 
-# Connect to another database when testing against a version that supports
-# multiple databases.
-if ActiveRecord::VERSION::MAJOR >= 6
-  SecondaryRecord.establish_connection :secondary
+# Connect to another database.
+SecondaryRecord.establish_connection :secondary
 
-  SecondaryContext = TransientRecord.context_for SecondaryRecord
-end
+SecondaryContext = TransientRecord.context_for SecondaryRecord
 
 class TransientRecordTest < Minitest::Spec
   before do
@@ -63,10 +52,6 @@ class TransientRecordTest < Minitest::Spec
       end
 
       it "creates temporary tables in multiple contexts" do
-        if ActiveRecord::VERSION::MAJOR < 6
-          skip("Active Record versions earlier than 6.0 does not support multiple databases")
-        end
-
         Context.create_table "users"
         SecondaryContext.create_table "users"
 
@@ -204,21 +189,19 @@ class TransientRecordTest < Minitest::Spec
       end
 
       it "does not remove non-transient tables" do
-        begin
-          @primary_connection.create_table :users
+        @primary_connection.create_table :users
 
-          TransientRecord.cleanup
+        TransientRecord.cleanup
 
-          assert @primary_connection.table_exists?(:users),
-                 "The non-transient table users should have not been removed"
-        ensure
-          @primary_connection.drop_table :users, if_exists: true
-        end
+        assert @primary_connection.table_exists?(:users),
+               "The non-transient table users should have not been removed"
+      ensure
+        @primary_connection.drop_table :users, if_exists: true
       end
     end
   end
 
-  def itemize array
+  def itemize(array)
     array.map(&:to_s).map { "- #{_1}" }.join("\n")
   end
 end

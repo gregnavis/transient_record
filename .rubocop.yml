@@ -2,7 +2,7 @@ require:
   - rubocop-rake
 
 AllCops:
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 3.1
   NewCops: enable
 
 Gemspec/DevelopmentDependencies:
@@ -40,9 +40,6 @@ Style/GlobalVars:
 
 Style/IfUnlessModifier:
   Enabled: false
-
-Style/MethodDefParentheses:
-  EnforcedStyle: require_no_parentheses
 
 Style/NegatedIf:
   Enabled: false

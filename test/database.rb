@@ -9,12 +9,8 @@ base_configuration = {
   password: ENV["DATABASE_PASSWORD"]
 }
 
-def downgrade_to_single_database_if_needed configurations
-  if ActiveRecord::VERSION::MAJOR >= 6
-    configurations
-  else
-    configurations.slice("primary")
-  end
+def downgrade_to_single_database_if_needed(configurations)
+  configurations
 end
 
 DATABASE_CONFIGURATIONS = {

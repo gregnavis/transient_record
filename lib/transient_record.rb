@@ -97,7 +97,7 @@ class TransientRecord
     # @param base_class [Class] class inheriting from {::ActiveRecord::Base}
     # @return [Module] module where transient models will be defined; the module
     #   extends {Context}, so it's instance methods can be called on the module.
-    def context_for base_class
+    def context_for(base_class)
       @contexts[base_class] ||= Context.create base_class
     end
 
@@ -121,7 +121,7 @@ class TransientRecord
     # @return [Module] context module used as a namespace for models
     #
     # @api private
-    def self.create base_class
+    def self.create(base_class)
       Module.new do
         extend Context
         @base_class       = base_class
@@ -154,11 +154,11 @@ class TransientRecord
     # @return [ModelDefinitionProxy]
     #
     # @see https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/SchemaStatements.html#method-i-create_table Documentation for #create_table in Ruby on Rails
-    def create_table table_name, options = {}, &block
+    def create_table(table_name, options = {}, &)
       table_name = table_name.to_sym
       @transient_tables << table_name
 
-      @base_class.connection.create_table table_name, **options, &block
+      @base_class.connection.create_table(table_name, **options, &)
 
       ModelDefinitionProxy.new self, table_name
     end
@@ -195,7 +195,7 @@ class TransientRecord
     # @yield class definition
     #
     # @return [nil]
-    def define_model model_name, base_class = nil, &block
+    def define_model(model_name, base_class = nil, &)
       base_class ||= @base_class
 
       if base_class > @base_class
@@ -207,7 +207,7 @@ class TransientRecord
       klass = Class.new base_class
       const_set model_name, klass
 
-      klass.class_eval(&block) if block_given?
+      klass.class_eval(&) if block_given?
 
       nil
     end
@@ -222,7 +222,7 @@ class TransientRecord
     # @return The query result returned by the database connection adapter.
     #
     # @see https://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/DatabaseStatements.html#method-i-execute Documentation for #execute in Ruby on Rails
-    def execute query, name = nil
+    def execute(query, name = nil)
       @base_class.connection.execute query, name
     end
 
@@ -276,13 +276,13 @@ class TransientRecord
   # model in close succession. It's marked private as there's no need for
   # callers to access it directly.
   class ModelDefinitionProxy
-    def initialize context, table_name
+    def initialize(context, table_name)
       @context    = context
       @table_name = table_name
     end
 
-    def define_model *args, &block
-      @context.define_model @table_name.to_s.classify, *args, &block
+    def define_model(...)
+      @context.define_model(@table_name.to_s.classify, ...)
     end
   end
 
