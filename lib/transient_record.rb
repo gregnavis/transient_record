@@ -79,7 +79,7 @@
 #   Primary.execute("CREATE ROLE gregnavis")
 class TransientRecord
   # Transient Record version number.
-  VERSION = "2.0.0"
+  VERSION = "3.0.0"
 
   # A class representing Transient Record errors.
   class Error < RuntimeError; end

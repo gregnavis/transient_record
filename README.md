@@ -7,6 +7,10 @@ and libraries**.
 The library was extracted from [active_record_doctor](https://github.com/gregnavis/active_record_doctor)
 to allow reuse.
 
+## Requirements
+
+Transient Record requires Ruby 3.1 or newer and Active Record 7.0 or newer.
+
 ## Installation
 
 Installing Transient Record is a two-step process.
